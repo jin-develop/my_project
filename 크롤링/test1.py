@@ -55,5 +55,4 @@ for i,j in sofa_url_dict.items():
             print(price)
             print(href)
             print(img_url)
-
     print('*'*80)
