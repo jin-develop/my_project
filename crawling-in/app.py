@@ -1,14 +1,30 @@
 import requests
 from bs4 import BeautifulSoup
+import time
+import random
+from flask import Flask, render_template, jsonify, request
+app = Flask(__name__)
 
-ikea_url = 'https://www.ikea.com/kr/ko/'
-# chair_url = 'https://www.ikea.com/kr/ko/cat/chairs-fu002/' # 의자를 선택하면 뒤에 cat/chairs-fu002/
-# sofa_url = 'https://www.ikea.com/kr/ko/cat/all-sofas-39130/' #sofa를 선택하면 cat/all-sofas-39130/
 
-''''' 소파를 선택하면 아래 저장된 sofa_url_dict 에 있는 링크들이 실행이 되게 할수 있게.
-        의자를 선택하면 역시 chair_url_dict가 실행되게.
-    or 색상이라는 링크를 들어가서 자동으로 크롤링 하기.'''
+from pymongo import MongoClient           # pymongo를 임포트 하기(패키지 인스톨 먼저 해야겠죠?)
+client = MongoClient('localhost', 27017)  # mongoDB는 27017 포트로 돌아갑니다.
+db = client.dbikea                     # 'dbikea'라는 이름의 db를 만듭니다.
 
+
+
+color_dict = {#'예시 링크 화이트' : 'https://www.ikea.com/kr/ko/cat/chairs-fu002/?filters=color%3A%ED%99%94%EC%9D%B4%ED%8A%B8%2410156',
+    'gray': '%2410028',
+    'beige': '%2410003',
+    'black': '%2410139',
+    'brown': '%2410019',
+    'white': '%2410156',
+    'Green': '%2410033',
+    'Blue': '%2410007',
+    'Red': '%2410124',
+    'Multi-color': '%2410583',
+    'Pink': '%2410119',
+    'Emerald': '%2410152'
+}
 
 sofa_url_dict = {
     'gray': 'https://www.ikea.com/kr/ko/cat/all-sofas-39130/?filters=color%3A%EA%B7%B8%EB%A0%88%EC%9D%B4%2410028',
@@ -23,37 +39,45 @@ sofa_url_dict = {
     'Pink': 'https://www.ikea.com/kr/ko/cat/all-sofas-39130/?filters=color%3A%ED%95%91%ED%81%AC%2410119',
     'Emerald': 'https://www.ikea.com/kr/ko/cat/all-sofas-39130/?filters=color%3A%ED%84%B0%EC%BF%BC%EC%9D%B4%EC%A6%88%2410152'
 }
-# 페이지 추가하기기  https://www.ikea.com/kr/ko/cat/all-sofas-39130/?filters=color%3A%EA%B7%B8%EB%A0%88%EC%9D%B4%2410028&page=1                     &page=1 &page=1 &page=1 &page=1
 
-   # URL을 읽어서 HTML를 받아오고,
-for i,j in sofa_url_dict.items():
-    headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
-    data = requests.get( j  ,headers=headers)
 
-    color = i
-    # HTML을 BeautifulSoup이라는 라이브러리를 활용해 검색하기 용이한 상태로 만듦
-    soup = BeautifulSoup(data.text, 'html.parser')
 
-    # select를 이용해서, tr들을 불러오기
-    sofas = soup.select('div.range-product-list__products > div ')
 
-    for sofa in sofas:
-        a_href = sofa.select_one('div.product-compact > div > a')
-        if a_href is not None:
-            href = a_href['href']
-            # print(href)
-            # print(sofa)
 
-            name1 = a_href.select_one('span.product-compact__name').text
-            name2 = a_href.select_one('span.product-compact__type').text
+## HTML을 주는 부분
+@app.route('/')
+def home():
+   return render_template('index.html')
 
-            name = name1 + ' ' + name2.strip()
-            price = a_href.select_one('span.product-compact__price').text.strip()
-            img_url = a_href.select_one('div.product-compact__image-container > div > div > img')['src']
-            print(color)
-            print(name)
-            print(price)
-            print(href)
-            print(img_url)
+@app.route('/info', methods=['GET'])
+def listing():
+    # 1. 모든 document 찾기 & _id 값은 출력에서 제외하기 
+    # 랜덤으로 sofas 정렬
+    sofas = list(db.sofas.find({}, {'_id': False}))
+    random.shuffle(sofas)
+    
+    
+    # 2. sofas라는 키 값으로 영화정보 내려주기
+    return jsonify({'result':'success', 'sofas': sofas})
 
-    print('*'*80)
+## API 역할을 하는 부분
+@app.route('/info', methods=['POST'])
+def saving():
+    # 1. 클라이언트로부터 데이터를 받기
+    thing = request.form['thing_give']
+    return jsonify({'result': 'success', 'msg': 'POST 연결되었습니다!'})
+
+
+
+
+# 기존 sofas 콜렉션을 삭제하고, 출처 url들을 가져온 후, 크롤링하여 DB에 저장합니다.
+
+
+#그냥 둘러보는 사람들을 위한 랜덤 이미지
+def rand_sofa():
+    all_sofa = list(db.sofas.find())
+    rand_sofa_one = random.sample(all_sofa, 50)
+
+
+if __name__ == '__main__':
+   app.run('0.0.0.0',port=5000,debug=True)
