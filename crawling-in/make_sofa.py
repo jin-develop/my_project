@@ -11,31 +11,20 @@ from pymongo import MongoClient           # pymongo를 임포트 하기(패키�
 client = MongoClient('localhost', 27017)  # mongoDB는 27017 포트로 돌아갑니다.
 db = client.dbikea
 
-
-
 ikea_url = 'https://www.ikea.com/kr/ko/'
-# chair_url = 'https://www.ikea.com/kr/ko/cat/chairs-fu002/' # 의자를 선택하면 뒤에 cat/chairs-fu002/
-# sofa_url = 'https://www.ikea.com/kr/ko/cat/all-sofas-39130/' #sofa를 선택하면 cat/all-sofas-39130/
 
-''''' 소파를 선택하면 아래 저장된 sofa_url_dict 에 있는 링크들이 실행이 되게 할수 있게.
-        의자를 선택하면 역시 chair_url_dict가 실행되게.
-    or 색상이라는 링크를 들어가서 자동으로 크롤링 하기.'''
 
-color_dict = {'예시 링크 화이트' : 'https://www.ikea.com/kr/ko/cat/chairs-fu002/?filters=color%3A%ED%99%94%EC%9D%B4%ED%8A%B8%2410156',
-    'gray': '%2410028',
-    'beige': '%2410003',
-    'black': '%2410139',
-    'brown': '%2410019',
-    'white': '%2410156',
-    'Green': '%2410033',
-    'Blue': '%2410007',
-    'Red': '%2410124',
-    'Multi-color': '%2410583',
-    'Pink': '%2410119',
-    'Emerald': '%2410152'
+
+#동서가구
+dongsuh_sofa = {
+    '4인' : 'http://www.dongsuhfurniture.co.kr/goods/goods_list.php?cateCd=001002',
+    '2,3인': 'http://www.dongsuhfurniture.co.kr/goods/goods_list.php?cateCd=001003',
+    '1인': 'http://www.dongsuhfurniture.co.kr/goods/goods_list.php?cateCd=001004',
+    '소파베드': 'http://www.dongsuhfurniture.co.kr/goods/goods_list.php?cateCd=001006'
 }
+dong_suh_img = 'http://www.dongsuhfurniture.co.kr'
 
-
+#이케아
 sofa_url_dict = {
     'gray': 'https://www.ikea.com/kr/ko/cat/all-sofas-39130/?filters=color%3A%EA%B7%B8%EB%A0%88%EC%9D%B4%2410028',
     'beige': 'https://www.ikea.com/kr/ko/cat/all-sofas-39130/?filters=color%3A%EB%B2%A0%EC%9D%B4%EC%A7%80%2410003',
@@ -63,7 +52,7 @@ chair_url_dict = {
     'orange': 'https://www.ikea.com/kr/ko/cat/chairs-fu002/?filters=color%3A%EC%98%A4%EB%A0%8C%EC%A7%80%2410112',
     'turquoise': 'https://www.ikea.com/kr/ko/cat/chairs-fu002/?filters=color%3A%ED%84%B0%EC%BF%BC%EC%9D%B4%EC%A6%88%2410152'
 }
-table_url_dict = {
+desk_url_dict = {
     'white': 'https://www.ikea.com/kr/ko/cat/tables-desks-fu004/?filters=color%3A%ED%99%94%EC%9D%B4%ED%8A%B8%2410156',
     'black': 'https://www.ikea.com/kr/ko/cat/tables-desks-fu004/?filters=color%3A%EB%B8%94%EB%9E%99%2410139',
     'beige': 'https://www.ikea.com/kr/ko/cat/tables-desks-fu004/?filters=color%3A%EB%B2%A0%EC%9D%B4%EC%A7%80%2410003',
@@ -75,65 +64,181 @@ table_url_dict = {
     'pink': 'https://www.ikea.com/kr/ko/cat/tables-desks-fu004/?filters=color%3A%ED%95%91%ED%81%AC%2410119',
 }
 
-def crawling():
+#오늘의 집
+ounul_sofa = 'https://ohou.se/store/category?category=0_1_0_3'
+ounul_img = 'https://ohou.se'
+
+def make_ikea_sofa():
     # URL을 읽어서 HTML를 받아오고, 데이터 가져오기 까지
     for i,j in sofa_url_dict.items():
-        # 우선 1 페이지만 가져오기
-        for k in range(1, 2):
-            page = '&page={}'.format(k)
 
-            real_page = j + page
-            driver.get(real_page)
+        driver.get(j)
 
-            req = driver.page_source
-            time.sleep(2)
-            color = i
-            # HTML을 BeautifulSoup이라는 라이브러리를 활용해 검색하기 용이한 상태로 만듦
-            soup = BeautifulSoup(req, 'html.parser')
 
-            # select를 이용해서, tr들을 불러오기
-            sofas = soup.select('div.range-product-list__products > div ')
 
-            for sofa in sofas:
-                a_href = sofa.select_one('div.product-compact > div > a')
-                if a_href is not None:
-                    href = a_href['href']
-                    # print(href)
-                    # print(sofa)
+        time.sleep(15)
 
-                    name1 = a_href.select_one('span.product-compact__name').text
-                    name2 = a_href.select_one('span.product-compact__type').text
+        color = i
+        # HTML을 BeautifulSoup이라는 라이브러리를 활용해 검색하기 용이한 상태로 만듦
+        req = driver.page_source
+        soup = BeautifulSoup(req, 'html.parser')
 
-                    name = name1 + ' ' + name2.strip()
-                    price = a_href.select_one('span.product-compact__price').text.strip()
-                    img_url = a_href.select_one('div.product-compact__image-container > div > div > img')['src']
-                    print(color)
-                    print(name)
-                    print(price)
-                    print(href)
-                    print(img_url)
+        # select를 이용해서, tr들을 불러오기
+        sofas = soup.select('div.range-product-list__products > div ')
 
-                    ##### DB에 추가하기,
-                    doc = {
-                        'color': color,
-                        'name': name,
-                        'price': price,
-                        'url': href,
-                        'img': img_url
-                    }
+        for sofa in sofas:
+            a_href = sofa.select_one('div.product-compact > div > a')
+            if a_href is not None:
+                href = a_href['href']
+                # print(href)
+                # print(sofa)
 
-                    db.sofas.insert_one(doc)
-                    # 만약 중복된것이 있으면 삭제하기 기능,
-                    # img 사진이 중복된것이 있다면 삭제하기
+                name1 = a_href.select_one('span.product-compact__name').text
+                name2 = a_href.select_one('span.product-compact__type').text
 
-            print('*'*80)
+                name = name1 + ' ' + name2.strip()
+                price = a_href.select_one('span.product-compact__price').text.strip()
+                img_url = a_href.select_one('div.product-compact__image-container > div > div > img')['src']
+                print(color)
+                print(name1)
+                print(name)
+                print(price)
+                print(href)
+                print(img_url)
+
+                ##### DB에 추가하기,
+                doc = {
+                    'brand': name1,
+                    'color': color,
+                    'name': name,
+                    'price': price,
+                    'url': href,
+                    'img': img_url,
+                    'like': 0
+                }
+
+                db.sofas.insert_one(doc)
+                # 만약 중복된것이 있으면 삭제하기 기능,
+                # img 사진이 중복된것이 있다면 삭제하기
+
+        print('*'*80)
+def make_dongsuh_sofa():
+    for i,j in dongsuh_sofa.items():
+
+        # URL을 읽어서 HTML를 받아오고,
+        headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
+        data = requests.get(j ,headers=headers)
+
+        # HTML을 BeautifulSoup이라는 라이브러리를 활용해 검색하기 용이한 상태로 만듦
+        soup = BeautifulSoup(data.text, 'html.parser')
+
+        # select를 이용해서, tr들을 불러오기
+        sofas = soup.select('div.content > div.goods_list_item > div.goods_list > div.goods_list_cont > div.item_gallery_type > ul > li')
+
+
+        for sofa in sofas:
+            a_href = sofa.select_one('div.item_cont')
+            if a_href is not None:
+                href = a_href.select_one('div.item_photo_box > a')['href']
+                # print(href)
+                # print(sofa)
+                real_href = dong_suh_img + href.replace('.','')
+                name1 = a_href.select_one('div.item_photo_box > a > img')['title']
+
+                img_url = a_href.select_one('div.item_photo_box')['data-image-magnify']
+                real_img_url = dong_suh_img + img_url
+
+                price = a_href.select_one('div.item_info_cont > div.item_money_box > strong.item_price > span').text.strip()
+
+                print(name1)
+                print(price)
+                print(real_href)
+                print(real_img_url)
+
+                doc = {
+                    'brand': 'Dong-suh',
+                    'name': name1,
+                    'price': price,
+                    'url': real_href,
+                    'img': real_img_url,
+                    'like': 0
+                }
+
+                db.sofas.insert_one(doc)
+def make_ounul_sofa():
+    # URL을 읽어서 HTML를 받아오고, 데이터 가져오기 까지
+
+
+    driver.get(ounul_sofa)
+
+    # HTML을 BeautifulSoup이라는 라이브러리를 활용해 검색하기 용이한 상태로 만듦
+
+
+    for i in range(7):
+        driver.find_element_by_tag_name('body').send_keys(Keys.END)
+        driver.implicitly_wait(10)
+        time.sleep(5)
+
+    req = driver.page_source
+    soup = BeautifulSoup(req, 'html.parser')
+
+    # select를 이용해서, tr들을 불러오기
+    sofas = soup.select('div.virtualized-list > div ')
+
+    for sofa in sofas:
+        a_href = sofa.select_one('article.production-item')
+        if a_href is not None:
+            href = ounul_img + a_href.select_one('a')['href']
+
+
+            real_href = ounul_img + href
+            name1 = a_href.select_one('div.production-item__content > h1 ')
+            brand = name1.select_one('span.production-item__header__brand').text
+            name = name1.select_one('span.production-item__header__name').text
+
+            if a_href.select_one('div.production-item__image > img') is None:
+                continue
+
+            img_url = a_href.select_one('div.production-item__image > img')['src']
+
+
+            price = a_href.select_one('div.production-item__content > span.production-item-price > span.production-item-price__price').text.strip()
+
+
+            print(brand)
+            print(name)
+            print(price)
+            print(href)
+            print(img_url)
+
+            # ##### DB에 추가하기,
+            doc = {
+                'brand': brand,
+                'name': name,
+                'price': price,
+                'url': href,
+                'img': img_url,
+                'like': 0
+            }
+
+            db.sofas.insert_one(doc)
+            # # 만약 중복된것이 있으면 삭제하기 기능,
+            # # img 사진이 중복된것이 있다면 삭제하기
+
+    print('*' * 80)
+
+
+
+
 
 
 # 기존 sofas 콜렉션을 삭제하고, 출처 url들을 가져온 후, 크롤링하여 DB에 저장합니다.
 def insert_all():
-    db.sofas.drop()  # sofas 콜렉션을 모두 지워줍니다.
-    crawling()
-
+      # sofas 콜렉션을 모두 지워줍니다.
+    db.sofas.drop()
+    make_ikea_sofa()
+    make_dongsuh_sofa()
+    make_ounul_sofa()
 
 
 insert_all()

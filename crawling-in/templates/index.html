@@ -1,118 +1,172 @@
 <!doctype html>
 <html lang="en">
+
 <head>
 
   <!-- Webpage Title -->
-  <title>Hello, world!</title>
+  <title>!!!!!!!!!!!!!가구 찾기!!!!!!!!!!!!!!!!!!!!</title>
 
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
 
-  <!-- JS -->   
+
+
+  <!-- JS -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 
   <!-- 구글폰트 -->
   <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
 
   <script>
 
-    $(document).ready(function(){
+    $(document).ready(function () {
+
       $('#cards-box').html('');
-      listing();
     });
-    
+    function openclose() {
 
-    function random1() {
-      $.ajax({
-        type: "GET",
-        url: "/info",
-        data: {},
-        success: function (response) {
-          if (response['result'] == 'success') {
-             let sofas = response['sofas'];
-             for (let i = 0; i < 20; i++) {
-               make_card(sofas[i]['price'],sofas[i]['color'],sofas[i]['img'],sofas[i]['name'],sofas[i]['url'])
-             }
-           } else {
-             alert('정보를 불러오지 못했습니다.');
-           }
-        }
-      });
-    }
-
-    
-    function make() {
-      // 읽기
-      let thing = $('#something').val();
-
-      if (thing == '선택하세요!') {
-        alert('종류를 선택하세요!');
-        retrun;
-      }
-
-      // 우리가 크롬 콘솔창에서 썼던 그 코드!
-      $.ajax({
-        type: "POST", // POST 방식으로 요청하겠다.
-        url: "/info", // /post라는 url에 요청하겠다.
-        data: {
-          thing_give: thing
-        }, // 데이터를 주는 방법
-        success: function(response){ // 성공하면
-          if (response['result'] == 'success') {
-            alert('포스팅 성공!');
-            
-          } else {
-            alert('서버 오류!')
-          }
-        }
-      })
-    }
-    function random1() {
       if ($('#posting-box').css('display') == 'block') {
         $('#posting-box').hide();
         $('#btn-posting-box').text('포스팅 박스 열기');
       } else {
         $('#posting-box').show();
         $('#btn-posting-box').text('포스팅 박스 닫기');
+
+
       }
     }
-    
 
-    function listing() {
-      $.ajax({
-        type: "GET",
-        url: "/info",
-        data: {},
-        success: function(response){
-           if (response['result'] == 'success') {
-             let sofas = response['sofas'];
-             for (let i = 0; i < 20; i++) {
-               make_card(sofas[i]['price'],sofas[i]['color'],sofas[i]['img'],sofas[i]['name'],sofas[i]['url'])
-             }
-           } else {
-             alert('기사를 받아오지 못했습니다');
-           }
+
+
+      function random1() {
+        $('#cards-box').html('');
+        $.ajax({
+          type: "GET",
+          url: "/info/random",
+          data: {},
+          success: function (response) {
+            if (response['result'] == 'success') {
+              let rands = response['rand'];
+              for (let i = 0; i < 20; i++) {
+                make_card(rands[i]['price'], rands[i]['img'], rands[i]['name'], rands[i]['url'], rands[i]['brand']);
+              }
+            } else {
+              alert('기사를 받아오지 못했습니다');
+            }
+          }
+        });
+      }
+
+
+      function find_thing() {
+        let thing = $('#something').val();
+
+        if (thing == '선택하세요!') {
+          alert('종류를 선택하세요!');
+          return;
         }
-      })
-    }
 
-    function make_card(price, color, img, name, url) {
-      let temp_html = '<div class="card">\
-                        <img class="card-img-top" src="'+img+'" alt="Card image cap">\
+        if (thing == 'sofa') {
+          $('#cards-box').html('');
+          $.ajax({
+            type: "GET",
+            url: "/info/sofa",
+            data: {},
+            success: function (response) {
+              if (response['result'] == 'success') {
+                let sofas = response['sofas'];
+                for (let i = 0; i < 20; i++) {
+                  make_card(sofas[i]['price'], sofas[i]['img'], sofas[i]['name'], sofas[i]['url'], sofas[i]['brand'])
+                }
+              } else {
+                alert('기사를 받아오지 못했습니다');
+              }
+            }
+          });
+        }
+
+        if (thing == 'chair') {
+          $('#cards-box').html('');
+          $.ajax({
+            type: "GET",
+            url: "/info/chair",
+            data: {},
+            success: function (response) {
+              if (response['result'] == 'success') {
+                let chairs = response['chairs'];
+                for (let i = 0; i < 20; i++) {
+                  make_card(chairs[i]['price'], chairs[i]['img'], chairs[i]['name'], chairs[i]['url'], chairs[i]['brand'])
+                }
+              } else {
+                alert('기사를 받아오지 못했습니다');
+              }
+            }
+          });
+        }
+
+        if (thing == 'desk') {
+          $('#cards-box').html('');
+          $.ajax({
+            type: "GET",
+            url: "/info/desk",
+            data: {},
+            success: function (response) {
+              if (response['result'] == 'success') {
+                let desks = response['desks'];
+                for (let i = 0; i < 20; i++) {
+                  make_card(desks[i]['price'], desks[i]['img'], desks[i]['name'], desks[i]['url'], desks[i]['brand'])
+                }
+              } else {
+                alert('기사를 받아오지 못했습니다');
+              }
+            }
+          });
+        }
+      }
+
+
+      function listing() {
+        $.ajax({
+          type: "GET",
+          url: "/info",
+          data: {},
+          success: function (response) {
+            if (response['result'] == 'success') {
+              let sofas = response['sofas'];
+              for (let i = 0; i < 20; i++) {
+                make_card(sofas[i]['price'], sofas[i]['brand'], sofas[i]['img'], sofas[i]['name'], sofas[i]['url'])
+              }
+            } else {
+              alert('기사를 받아오지 못했습니다');
+            }
+          }
+        })
+      }
+
+      function make_card(price, img, name, url, brand) {
+        let temp_html = '<div class="card">\
+                        <img class="card-img-top" src="'+ img + '" alt="Card image cap">\
                         <div class="card-body">\
-                          <a href="'+url+'" class="card-title">'+name+'</a>\
-                          <p class="card-text">'+color+'</p>\
-                          <p class="card-text comment">'+price+'</p>\
+                          <p class="card-title">'+ brand + '</p>\
+                          <a href="'+ url + '" class="card-title">' + name + '</a>\
+                          <p class="card-text comment">'+ price + '</p>\
                         </div>\
                       </div>';
-      $('#cards-box').append(temp_html);
-    }
+        $('#cards-box').append(temp_html);
+      }
   </script>
 
   <!-- style -->
@@ -120,20 +174,24 @@
     * {
       font-family: 'Stylish', sans-serif;
     }
+
     .wrap {
       width: 900px;
       margin: auto;
     }
+
     .botton {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
+
     .comment {
       color: blue;
       font-weight: bold;
     }
+
     .form-post {
       max-width: 500px;
       padding: 2rem;
@@ -143,15 +201,23 @@
       border: solid;
       display: block;
     }
+
     #posting-box {
       display: none;
     }
-    .input-group{
-        margin: 10px;
+
+    .input-group {
+      margin: 10px;
     }
+    .card-columns{
+      width: 900px;
+      margin: auto;
+    }
+    
   </style>
 
 </head>
+
 <body>
   <div class="wrap">
     <div class="jumbotron">
@@ -160,84 +226,82 @@
       <hr class="my-4">
       <div class='botton'>
         <div class="input-group">
-            <select class="custom-select" id="something" aria-label="Example select with button addon">
+          <select class="custom-select" id="something" aria-label="Example select with button addon">
             <option selected>선택하세요!</option>
-            <option value="1">의자</option>
-            <option value="2">소파</option>
-            <option value="3">책상</option>
-            </select>
-            <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type=button onclick='make()'>검색!</button>
+            <option value="chair">의자</option>
+            <option value="sofa">소파</option>
+            <option value="desk">책상</option>
+          </select>
+
+          <div class="input-group-append">
+            <div class="input-group mb-3">
+              
+              <input type="text" placeholder="보고싶은 갯수" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
             </div>
+            <button class="btn btn-outline-secondary" type=button onclick='find_thing()'>검색!</button>
+          </div>
+
         </div>
+        <div class="buttons_pi">
+
+          <button class="button is-warning" onclick="openclose()">가격으로 검색!</button>
+
+        </div>
+        <div class="form-post" id="posting-box">
+          <form id='price'>
+            <div>
+              <label> 최소가격: </label>
+              <input type="range" name="points" min="10000" max="500000" step="3000" value="0"
+                oninput="document.getElementById('value1').innerHTML=this.value;">
+              <span id="value1"></span>
+            </div>
+            <div>
+              <label> 최대가격: </label>
+              <input type="range" name="points" min="20000" max="900000" step="3000" value="0"
+                oninput="document.getElementById('value2').innerHTML=this.value;">
+              <span id="value2"></span>
+            </div>
+            <div class="buttons">
+              <button class="button is-primary">Primary</button>
+              
+            </div>
+          </form>
+        </div>
+        <br>
         <p class="lead">
-            <a id="btn-posting-box" onclick="random1()" class="btn btn-primary btn-lg" href="#" role="button">그냥 둘러볼께요.</a>
+          <a id="btn-posting-box" onclick="random1()" class="button is-success" href="#" role="button">그냥
+            둘러볼께요.</a>
         </p>
-        </div>
-      <div class="form-post" id="posting-box">
+      </div>
 
-        <select class="custom-select[]" multiple="multiple" id="random2" aria-label="Example select with button addon">
-          <option selected>선택하세요!</option>
-          <option value="1">의자</option>
-          <option value="2">소파</option>
-          <option value="3">책상</option>
-        </select>
-      
-        <button type="button" class="btn btn-primary" onclick="posting()">기사저장</button>
-      </form>
-    </div>
-    </div>
-    
-    <div class="card-columns"  id="cards-box">
-      <div class="card">
-        <img class="card-img-top" src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg" alt="Card image cap">
-        <div class="card-body">
-          <a href="#" class="card-title">여기 기사 제목이 들어가죠</a>
-          <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
-          <p class="card-text comment">+price+</p>\
-        </div>
-      </div>
-      <div class="card">
-        <img class="card-img-top" src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">여기 기사 제목이 들어가죠</h5>
-          <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
 
-        </div>
+
+    </div>
+  </div>
+
+  <div class="card-columns" id="cards-box">
+    <div class="card">
+      <img class="card-img-top"
+        src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg"
+        alt="Card image cap">
+      <div class="card-body">
+        <a href="#" class="card-title">여기 기사 제목이 들어가죠</a>
+        <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
+        <p class="card-text comment">+price+</p>\
       </div>
-      <div class="card">
-        <img class="card-img-top" src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">여기 기사 제목이 들어가죠</h5>
-          <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
-          
-        </div>
+    </div>
+    <div class="card">
+      <img class="card-img-top"
+        src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg"
+        alt="Card image cap">
+      <div class="card-body">
+        <h5 class="card-title">여기 기사 제목이 들어가죠</h5>
+        <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
+
       </div>
-      <div class="card">
-        <img class="card-img-top" src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">여기 기사 제목이 들어가죠</h5>
-          <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
-          
-        </div>
-      </div>
-      <div class="card">
-        <img class="card-img-top" src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">여기 기사 제목이 들어가죠</h5>
-          <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
-          
-        </div>
-      </div>
-      <div class="card">
-        <img class="card-img-top" src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg" alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">여기 기사 제목이 들어가죠</h5>
-          <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
-          
-        </div>
-      </div>
+
     </div>
   </div>
 </body>
+
 </html>
