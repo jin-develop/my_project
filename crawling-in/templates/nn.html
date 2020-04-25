@@ -4,7 +4,7 @@
 <head>
 
   <!-- Webpage Title -->
-  <title>Hello, world!</title>
+  <title>!!!!!!!!!!!!!가구 찾기!!!!!!!!!!!!!!!!!!!!</title>
 
   <!-- Required meta tags -->
   <meta charset="utf-8">
@@ -13,6 +13,9 @@
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+
+
 
   <!-- JS -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -22,93 +25,138 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
     integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
     crossorigin="anonymous"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 
   <!-- 구글폰트 -->
   <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
 
   <script>
-    function openclose() {
-      if ($('#posting-box').css('display') == 'block') {
-        $('#posting-box').hide();
-        $('#btn-posting-box').text('포스팅 박스 열기')
-      } else {
-        $('#posting-box').show();
-        $('#btn-posting-box').text('포스팅 박스 닫기')
-      }
-    }
 
     $(document).ready(function () {
       $('#cards-box').html('');
-      listing();
     });
 
-    function listing() {
-      $.ajax({
-        type: "GET",
-        url: "/memo",
-        data: {},
-        success: function (response) {
-          if (response['result'] == 'success') {
-            let memos = response['memos'];
-            for (let index = 0; index < memos.length; index++) {
-              const memo = memos[index];
-              let comment = memo['comment'];
-              let desc = memo['desc'];
-              let image = memo['image'];
-              let title = memo['title'];
-              let url = memo['url'];
+    function openclose() {
+      if ($('#posting-box').css('display') == 'block') {
+        $('#posting-box').hide();
+        $('.button is-warning').text('가격비교 열기');
+      } else {
+        $('#posting-box').show();
+        $('.button is-warning').text('가격비교 끄기');
+      }
+    }
 
-              make_card(comment, desc, image, title, url);
+
+
+      function random1() {
+        $('#cards-box').html('');
+        $.ajax({
+          type: "GET",
+          url: "/info/random",
+          data: {},
+          success: function (response) {
+            if (response['result'] == 'success') {
+              let rands = response['rand'];
+              for (let i = 0; i < 50; i++) {
+                make_card(rands[i]['price'], rands[i]['img'], rands[i]['name'], rands[i]['url'], rands[i]['brand']);
+              }
+            } else {
+              alert('정보를 받아오지 못했습니다');
             }
           }
-        }
-      })
-    }
+        });
+      }
 
-    function make_card(comment, desc, image, title, url) {
-      let temp_html = '<div class="card"> \
-                        <img class="card-img-top" \
-                          src="' + image + '" \
-                          alt="Card image cap">\
+      function find_thing() {
+        let thing = $('#something').val();
+        let count = $('#count_num').val();
+        let number_count = parseInt(count);
+
+        if (isNaN(number_count) == true || count == '') {
+          alert('숫자를 입력하세요!');
+          return;
+        }
+
+        if (thing == '선택하세요!') {
+          alert('종류를 선택하세요!');
+          return;
+        }
+
+        if (thing == 'sofa') {
+          $('#cards-box').html('');
+          $.ajax({
+            type: "GET",
+            url: "/info/sofa",
+            data: {},
+            success: function (response) {
+              if (response['result'] == 'success') {
+                let sofas = response['sofas'];
+                make_price()
+                for (let i = 0; i < number_count; i++) {
+                  make_card(sofas[i]['price'], sofas[i]['img'], sofas[i]['name'], sofas[i]['url'], sofas[i]['brand'])
+                }
+              } else {
+                alert('기사를 받아오지 못했습니다');
+              }
+            }
+          });
+        }
+
+        if (thing == 'chair') {
+          $('#cards-box').html('');
+          $.ajax({
+            type: "GET",
+            url: "/info/chair",
+            data: {},
+            success: function (response) {
+              if (response['result'] == 'success') {
+                let chairs = response['chairs'];
+                for (let i = 0; i < number_count; i++) {
+                  make_card(chairs[i]['price'], chairs[i]['img'], chairs[i]['name'], chairs[i]['url'], chairs[i]['brand'])
+                }
+              } else {
+                alert('기사를 받아오지 못했습니다');
+              }
+            }
+          });
+        }
+
+        if (thing == 'desk') {
+          $('#cards-box').html('');
+          $.ajax({
+            type: "GET",
+            url: "/info/desk",
+            data: {},
+            success: function (response) {
+              if (response['result'] == 'success') {
+                let desks = response['desks'];
+
+                for (let i = 0; i < number_count; i++) {
+                  make_card(desks[i]['price'], desks[i]['img'], desks[i]['name'], desks[i]['url'], desks[i]['brand'])
+                }
+              } else {
+                alert('기사를 받아오지 못했습니다');
+              }
+            }
+          });
+        }
+      }
+
+
+      function make_card(price, img, name, url, brand) {
+        let temp_html = '<div class="card">\
+                        <img class="card-img-top" src="'+ img + '" alt="Card image cap">\
                         <div class="card-body">\
-                          <h5 class="card-title">' + title + '</h5>\
-                          <p class="card-text">' + desc + '</p>\
-                          <p class="card-text comment">' + comment + '</p>\
+                          <p class="card-title">'+ brand + '</p>\
+                          <a href="'+ url + '" class="card-title">' + name + '</a>\
+                          <p class="card-text comment">'+ price + '</p>\
                         </div>\
                       </div>';
-      $('#cards-box').append(temp_html);
-    }
-
-    function posting() {
-      let url = $('#posting-url').val();
-      let comment = $('#posting-comment').val();
-
-      if (url == '') {
-        alert('url을 입력하세요');
-        return; // 여기서 더 진행하지마!
+        $('#cards-box').append(temp_html);
       }
 
-      if (comment == '') {
-        alert('코멘트를 입력하세요.');
-        return;
-      }
+      
 
-
-      $.ajax({
-        type: "POST",
-        url: "/memo",
-        data: {
-          'url_give': url,
-          'comment_give': comment
-        },
-        success: function (response) { // 성공하면
-          if (response['result'] == 'success') {
-            alert(response['msg']);
-            window.location.reload();
-          }
-        }
-      })
-    }
   </script>
 
   <!-- style -->
@@ -120,6 +168,13 @@
     .wrap {
       width: 900px;
       margin: auto;
+    }
+
+    .botton {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
     .comment {
@@ -140,6 +195,18 @@
     #posting-box {
       display: none;
     }
+
+    .input-group {
+      margin: 10px;
+    }
+    .card-columns{
+      width: 900px;
+      margin: auto;
+    }
+    .input-group{
+      margin: auto;
+    }
+    
   </style>
 
 </head>
@@ -147,46 +214,78 @@
 <body>
   <div class="wrap">
     <div class="jumbotron">
-      <h1 class="display-4">나홀로 링크 메모장!</h1>
-      <p class="lead">중요한 링크를 저장해두고, 나중에 볼 수 있는 공간입니다</p>
+      <h1 class="display-4 botton">나만의 가구찾기</h1>
+      <p class="lead botton">본인이 원하는 가구를 가격대 별로 볼수 있습니다.</p>
       <hr class="my-4">
-      <p class="lead">
-        <a id="btn-posting-box" onclick="openclose()" class="btn btn-primary btn-lg" href="#" role="button">포스팅박스 열기</a>
-      </p>
-    </div>
-    <div class="form-post" id="posting-box">
-      <div>
-        <div class="form-group">
-          <label for="exampleFormControlInput1">아티클 URL</label>
-          <input id="posting-url" class="form-control" placeholder="">
+      <div class='botton'>
+        <div class="input-group">
+          <select class="custom-select" id="something" aria-label="Example select with button addon">
+            <option selected>선택하세요!</option>
+            <option value="chair">의자</option>
+            <option value="sofa">소파</option>
+            <option value="desk">책상</option>
+            
+          </select>
+
+          <div class="input-group-append">
+            <div class="input-group mb-3">              
+              <input type="text" placeholder="보고싶은 갯수(숫자입력)" class="form-control count_form" id='count_num' aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+            </div>
+            <button class="btn btn-outline-secondary" type=button onclick='find_thing()'>검색!</button>
+          </div>
+
         </div>
-        <div class="form-group">
-          <label for="exampleFormControlTextarea1">간단 코멘트</label>
-          <textarea id="posting-comment" class="form-control" rows="2"></textarea>
+
+        <br>
+        <p class="lead">
+          <a id="btn-posting-box" onclick="random1()" class="button is-success" href="#" role="button">그냥
+            둘러볼께요.</a>
+        </p>
+        <br>
+        <div id="buttons_pi">
+        <button class="button is-warning" onclick="openclose()">가격으로 검색!</button>
+                        </div>
+                        <div class="form-post" id="posting-box">
+                          <form id='price'>
+                            <div>
+                              <label> 최소가격(원): </label>
+                              <input type='number' min='1000' max='10000000' step='1000'>
+                              <span id="value1"></span>
+                            </div>
+                            <div>
+                              <label> 최대가격(원): </label>
+                              <input type='number' min='1000' max='100000000' step='1000'>
+                              <span id="value2"></span>
+                            </div>
+                            <div class="buttons">
+                              <button class="button is-primary">검색!</button>
+              
+            </div>
+          </form>
         </div>
-        <button onclick="posting()" class="btn btn-primary">기사저장</button>
       </div>
     </div>
-    <div class="card-columns" id="cards-box">
-      <div class="card">
-        <img class="card-img-top"
-          src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg"
-          alt="Card image cap">
-        <div class="card-body">
-          <a href="#" class="card-title">여기 기사 제목이 들어가죠</a>
-          <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
-          <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>
-        </div>
+  </div>
+
+  <div class="card-columns" id="cards-box">
+    <div class="card">
+      <img class="card-img-top"
+        src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg"
+        alt="Card image cap">
+      <div class="card-body">
+        <a href="#" class="card-title">여기 기사 제목이 들어가죠</a>
+        <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
+        <p class="card-text comment">+price+</p>\
       </div>
-      <div class="card">
-        <img class="card-img-top"
-          src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg"
-          alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">여기 기사 제목이 들어가죠</h5>
-          <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
-          <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>
-        </div>
+    </div>
+    <div class="card">
+      <img class="card-img-top"
+        src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg"
+        alt="Card image cap">
+      <div class="card-body">
+        <h5 class="card-title">여기 기사 제목이 들어가죠</h5>
+        <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>
+
       </div>
 
     </div>

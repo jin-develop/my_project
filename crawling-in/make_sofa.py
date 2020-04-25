@@ -142,7 +142,7 @@ def make_dongsuh_sofa():
                 href = a_href.select_one('div.item_photo_box > a')['href']
                 # print(href)
                 # print(sofa)
-                real_href = dong_suh_img + href.replace('.','')
+                real_href = dong_suh_img + href.lstrip('.')
                 name1 = a_href.select_one('div.item_photo_box > a > img')['title']
 
                 img_url = a_href.select_one('div.item_photo_box')['data-image-magnify']

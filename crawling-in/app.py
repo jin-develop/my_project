@@ -19,6 +19,10 @@ db = client.dbikea                     # 'dbikea'라는 이름의 db를 만듭�
 def home():
    return render_template('index.html')
 
+@app.route('/info')
+def info():
+   return render_template('main.html')
+
 @app.route('/info/random', methods=['GET'])
 def listing():
     # 1. 모든 document 찾기 & _id 값은 출력에서 제외하기 
@@ -53,24 +57,50 @@ def get_desk():
     random.shuffle(desks)
     return jsonify({'result':'success', 'desks': desks})
 
+@app.route('/info/price/sofa', methods=['POST'])
+def get_price_sofa():
+    min_price = request.form['min_price_give']
+    max_price = request.form['max_price_give']
+    sofa_list = []
+    sofas = list(db.sofas.find({}, {'_id': False}))
+    for sofa in sofas:
+        price = int(sofa['price'].replace('￦','').replace('원','').strip().replace(',',''))
+        if int(min_price) <= price and price <= int(max_price):
+            sofa_list.append(sofa)
+    random.shuffle(sofa_list)
+    return jsonify({'result':'success', 'sofas': sofa_list})
+
+@app.route('/info/price/chair', methods=['POST'])
+def get_price_chair():
+    min_price = request.form['min_price_give']
+    max_price = request.form['max_price_give']
+    sofa_list = []
+    chairs = list(db.chairs.find({}, {'_id': False}))
+    for sofa in chairs:
+        price = int(sofa['price'].replace('￦','').replace('원','').strip().replace(',',''))
+        if int(min_price) <= price and price <= int(max_price):
+            sofa_list.append(sofa)
+    random.shuffle(sofa_list)
+    return jsonify({'result':'success', 'chairs': sofa_list})
+
+@app.route('/info/price/desk', methods=['POST'])
+def get_price_desk():
+    min_price = request.form['min_price_give']
+    max_price = request.form['max_price_give']
+    sofa_list = []
+    sofas = list(db.desks.find({}, {'_id': False}))
+    for sofa in sofas:
+        price = int(sofa['price'].replace('￦','').replace('원','').strip().replace(',',''))
+        if int(min_price) <= price and price <= int(max_price):
+            sofa_list.append(sofa)
+    random.shuffle(sofa_list)
+    return jsonify({'result':'success', 'desks': sofa_list})
+
 
 ## API 역할을 하는 부분
-@app.route('/info', methods=['POST'])
-def saving():
-    # 1. 클라이언트로부터 데이터를 받기
-    thing = request.form['thing_give']
-    return jsonify({'result': 'success', 'msg': 'POST 연결되었습니다!'})
-
-## 데이터 지우기 
 
 
-# 기존 sofas 콜렉션을 삭제하고, 출처 url들을 가져온 후, 크롤링하여 DB에 저장합니다.
 
-
-#그냥 둘러보는 사람들을 위한 랜덤 이미지
-def rand_sofa():
-    all_sofa = list(db.sofas.find())
-    rand_sofa_one = random.sample(all_sofa, 50)
 
 
 if __name__ == '__main__':
