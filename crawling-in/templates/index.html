@@ -11,14 +11,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 
-
+  <!-- CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='sass1.css') }}">
-  <!-- 구글폰트 -->
+  <!-- JS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  
+  <script src="{{ url_for('static', filename='script1.js') }}" > </script>
+  
 
+  
 
 
   <script>
-   
+function test(){
+   $.("#mybutton").click(function() {
+       // get the data in form
+       $exampledata = 'foo'
+       $.post("/some/flask/function",
+        {'data': $exampledata},
+         function(response) {
+           var myDiv = $('#resultarea'); // The place where you want to inser the template
+           myDiv.html(response);
+       });
+});
+}
   </script>
 
 
@@ -38,6 +61,10 @@
     <div class="message">
       <h1>Responsive background</h1>    
       <p>With thanks to http://sixrevisions.com/css/responsive-background-image/ and 500px</p>
+      <form id='myform'>
+        <input type='text'> some input...
+        <button class="btn btn-outline-secondary" type=button onclick='find_thing()'>검색!</button>
+ </form>
     </div>
   </div>
    

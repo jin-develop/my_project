@@ -19,6 +19,16 @@ db = client.dbikea                     # 'dbikea'라는 이름의 db를 만듭�
 def home():
    return render_template('index.html')
 
+@app.route('/go')
+def go():
+   return render_template('index2.html')
+
+@app.route("/forward/", methods=['POST'])
+def move_forward():
+       #Moving forward code
+       forward_message = "Moving Forward..."
+       return render_template('index.html')
+
 @app.route('/info')
 def info():
    return render_template('main.html')
