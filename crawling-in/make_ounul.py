@@ -13,76 +13,190 @@ db = client.dbikea
 
 
 
-ounul_sofa = 'https://ohou.se/store/category?category=0_1_0_3'
+ounul_sofa = {
+    '일반소파' : 'https://ohou.se/store/category?category=0_1_0_3',
+    '빈백소파' : 'https://ohou.se/store/category?category=0_1_0_4',
+    '좌식소파' : 'https://ohou.se/store/category?category=0_1_0_5',
+    '소파베드' : 'https://ohou.se/store/category?category=0_1_0_6',
+    '소파스툴' : 'https://ohou.se/store/category?category=0_1_0_7'
+
+
+}
+ounul_chair = {
+'일반의자' : 'https://ohou.se/store/category?category=0_1_11_0',
+'좌식의자' : 'https://ohou.se/store/category?category=0_1_11_1',
+'안락의자' : 'https://ohou.se/store/category?category=0_1_11_2'
+}
+ounul_desk = {
+    '일반형책상(일자형)' : 'https://ohou.se/store/category?category=0_5_1_4',
+    '코너형책상(L자형)' : 'https://ohou.se/store/category?category=0_5_1_0',
+    '컴퓨터형책상(H형)' : 'https://ohou.se/store/category?category=0_5_1_1',
+    '좌식책상' : 'https://ohou.se/store/category?category=0_5_1_2',
+    '스탠딩책상' : 'https://ohou.se/store/category?category=0_5_1_3'
+}
 ounul_img = 'https://ohou.se'
 def make_ounul_sofa():
-    # URL을 읽어서 HTML를 받아오고, 데이터 가져오기 까지
+    for i, j in ounul_sofa.items():
+        type_ = i
+        driver.get(j)
+        for i in range(7):
+            driver.find_element_by_tag_name('body').send_keys(Keys.END)
+            driver.implicitly_wait(10)
+            time.sleep(5)
+
+        req = driver.page_source
+        soup = BeautifulSoup(req, 'html.parser')
+
+        # select를 이용해서, tr들을 불러오기
+        sofas = soup.select('div.virtualized-list > div ')
+
+        for sofa in sofas:
+            a_href = sofa.select_one('article.production-item')
+            if a_href is not None:
+                href = ounul_img + a_href.select_one('a')['href']
 
 
-    driver.get(ounul_sofa)
+                real_href = ounul_img + href
+                name1 = a_href.select_one('div.production-item__content > h1 ')
+                brand = name1.select_one('span.production-item__header__brand').text
+                name = name1.select_one('span.production-item__header__name').text
 
-    # HTML을 BeautifulSoup이라는 라이브러리를 활용해 검색하기 용이한 상태로 만듦
+                if a_href.select_one('div.production-item__image > img') is None:
+                    continue
+
+                img_url = a_href.select_one('div.production-item__image > img')['src']
+                price = a_href.select_one('div.production-item__content > span.production-item-price > span.production-item-price__price').text.strip()
+                print(brand)
+                print(name)
+                print(price)
+                print(href)
+                print(img_url)
+
+                # ##### DB에 추가하기,
+                doc = {
+                    'brand': brand,
+                    'type': type_,
+                    'name': name,
+                    'price': price,
+                    'url': href,
+                    'img': img_url,
+                    'like': 0
+                }
+                db.sofas.insert_one(doc)
+        print('*' * 80)
+
+def make_ounul_chair(): 
+    for i,j in ounul_chair.items():
+        type_ = i
+        driver.get(j)
+        for i in range(7):
+            driver.find_element_by_tag_name('body').send_keys(Keys.END)
+            driver.implicitly_wait(10)
+            time.sleep(5)
+
+        req = driver.page_source
+        soup = BeautifulSoup(req, 'html.parser')
+
+        # select를 이용해서, tr들을 불러오기
+        sofas = soup.select('div.virtualized-list > div ')
+
+        for sofa in sofas:
+            a_href = sofa.select_one('article.production-item')
+            if a_href is not None:
+                href = ounul_img + a_href.select_one('a')['href']
 
 
-    for i in range(7):
-        driver.find_element_by_tag_name('body').send_keys(Keys.END)
-        driver.implicitly_wait(10)
-        time.sleep(5)
+                real_href = ounul_img + href
+                name1 = a_href.select_one('div.production-item__content > h1 ')
+                brand = name1.select_one('span.production-item__header__brand').text
+                name = name1.select_one('span.production-item__header__name').text
 
-    req = driver.page_source
-    soup = BeautifulSoup(req, 'html.parser')
+                if a_href.select_one('div.production-item__image > img') is None:
+                    continue
 
-    # select를 이용해서, tr들을 불러오기
-    sofas = soup.select('div.virtualized-list > div ')
+                img_url = a_href.select_one('div.production-item__image > img')['src']
+                price = a_href.select_one('div.production-item__content > span.production-item-price > span.production-item-price__price').text.strip()
+                print(brand)
+                print(name)
+                print(price)
+                print(href)
+                print(img_url)
 
-    for sofa in sofas:
-        a_href = sofa.select_one('article.production-item')
-        if a_href is not None:
-            href = ounul_img + a_href.select_one('a')['href']
+                # ##### DB에 추가하기,
+                doc = {
+                    'brand': brand,
+                    'type': type_,
+                    'name': name,
+                    'price': price,
+                    'url': href,
+                    'img': img_url,
+                    'like': 0
+                }
+                db.chairs.insert_one(doc)
+        print('*' * 80)
+
+def make_ounul_desk(): 
+    for i,j in ounul_desk.items():
+        type_ = i
+        driver.get(j)
+        for i in range(7):
+            driver.find_element_by_tag_name('body').send_keys(Keys.END)
+            driver.implicitly_wait(10)
+            time.sleep(5)
+
+        req = driver.page_source
+        soup = BeautifulSoup(req, 'html.parser')
+
+        # select를 이용해서, tr들을 불러오기
+        sofas = soup.select('div.virtualized-list > div ')
+
+        for sofa in sofas:
+            a_href = sofa.select_one('article.production-item')
+            if a_href is not None:
+                href = ounul_img + a_href.select_one('a')['href']
 
 
-            real_href = ounul_img + href
-            name1 = a_href.select_one('div.production-item__content > h1 ')
-            brand = name1.select_one('span.production-item__header__brand').text
-            name = name1.select_one('span.production-item__header__name').text
+                real_href = ounul_img + href
+                name1 = a_href.select_one('div.production-item__content > h1 ')
+                brand = name1.select_one('span.production-item__header__brand').text
+                name = name1.select_one('span.production-item__header__name').text
 
-            if a_href.select_one('div.production-item__image > img') is None:
-                continue
+                if a_href.select_one('div.production-item__image > img') is None:
+                    continue
 
-            img_url = a_href.select_one('div.production-item__image > img')['src']
+                img_url = a_href.select_one('div.production-item__image > img')['src']
+                price = a_href.select_one('div.production-item__content > span.production-item-price > span.production-item-price__price').text.strip()
+                print(brand)
+                print(name)
+                print(price)
+                print(href)
+                print(img_url)
+
+                # ##### DB에 추가하기,
+                doc = {
+                    'brand': brand,
+                    'type': type_,
+                    'name': name,
+                    'price': price,
+                    'url': href,
+                    'img': img_url,
+                    'like': 0
+                }
+                db.desks.insert_one(doc)
+        print('*' * 80)
 
 
-            price = a_href.select_one('div.production-item__content > span.production-item-price > span.production-item-price__price').text.strip()
-
-
-            print(brand)
-            print(name)
-            print(price)
-            print(href)
-            print(img_url)
-
-            # ##### DB에 추가하기,
-            doc = {
-                'brand': brand,
-                'name': name,
-                'price': price,
-                'url': href,
-                'img': img_url,
-                'like': 0
-            }
-
-            db.sofas.insert_one(doc)
-            # # 만약 중복된것이 있으면 삭제하기 기능,
-            # # img 사진이 중복된것이 있다면 삭제하기
-
-    print('*' * 80)
 
 # 기존 sofas 콜렉션을 삭제하고, 출처 url들을 가져온 후, 크롤링하여 DB에 저장합니다.
-def insert_all():
-      # sofas 콜렉션을 모두 지워줍니다.
+def make_ounul():
+      
     make_ounul_sofa()
+    print('*'*80)
+    make_ounul_chair()
+    print('*'*80)
+    make_ounul_desk()
+    print('*'*80)
 
 
-
-insert_all()
+make_ounul()
 

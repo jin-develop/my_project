@@ -5,13 +5,9 @@ import random
 from flask import Flask, render_template, jsonify, request
 app = Flask(__name__)
 
-
 from pymongo import MongoClient           # pymongo를 임포트 하기(패키지 인스톨 먼저 해야겠죠?)
 client = MongoClient('localhost', 27017)  # mongoDB는 27017 포트로 돌아갑니다.
 db = client.dbikea                     # 'dbikea'라는 이름의 db를 만듭니다.
-
-
-
 
 
 ## HTML을 주는 부분
@@ -19,19 +15,21 @@ db = client.dbikea                     # 'dbikea'라는 이름의 db를 만듭�
 def home():
    return render_template('index.html')
 
-@app.route('/go')
-def go():
-   return render_template('index2.html')
 
-@app.route("/forward/", methods=['POST'])
-def move_forward():
+@app.route("/info", methods=['GET'])
+def move_forward1():
        #Moving forward code
-       forward_message = "Moving Forward..."
-       return render_template('index.html')
+       return render_template('info.html')
 
-@app.route('/info')
-def info():
-   return render_template('main.html')
+@app.route("/rand", methods=['GET'])
+def move_forward2():
+       #Moving forward code
+       return render_template('rand.html')
+
+@app.route('/test')
+def real_test():
+   return render_template('prac.html')
+
 
 @app.route('/info/random', methods=['GET'])
 def listing():
@@ -39,9 +37,12 @@ def listing():
     # 랜덤으로 sofas 정렬
     sofas = list(db.sofas.find({}, {'_id': False}))
     chairs = list(db.chairs.find({}, {'_id': False}))
+    desks = list(db.desks.find({}, {'_id': False}))
     random.shuffle(chairs)
     random.shuffle(sofas)
-    rand = sofas + chairs
+    random.shuffle(desks)
+
+    rand = sofas + chairs + desks
     random.shuffle(rand)
     
     return jsonify({'result':'success', 'rand': rand})
@@ -67,6 +68,7 @@ def get_desk():
     random.shuffle(desks)
     return jsonify({'result':'success', 'desks': desks})
 
+
 @app.route('/info/price/sofa', methods=['POST'])
 def get_price_sofa():
     min_price = request.form['min_price_give']
@@ -79,6 +81,7 @@ def get_price_sofa():
             sofa_list.append(sofa)
     random.shuffle(sofa_list)
     return jsonify({'result':'success', 'sofas': sofa_list})
+
 
 @app.route('/info/price/chair', methods=['POST'])
 def get_price_chair():
@@ -107,7 +110,28 @@ def get_price_desk():
     return jsonify({'result':'success', 'desks': sofa_list})
 
 
-## API 역할을 하는 부분
+# 데이터 삭제 (이미지 주소가 같은걸 삭제)
+# @app.route('/info/delete', methods=['POST'])
+# def star_delete():
+#     # 1. 클라이언트가 전달한 name_give를 name_receive 변수에 넣습니다.
+#     img_receive = request.form['img_give']
+#     # 2. mystar 목록에서 delete_one으로 img이 name_receive와 일치하는 star를 제거합니다.
+#     db.mystar.delete_one({'img':img_receive})
+#     # 3. 성공하면 success 메시지를 반환합니다.
+#     return jsonify({'result': 'success'})
+
+# @app.route('/info/like', methods=['POST'])
+# def star_like():
+    
+#     img_receive = request.form['img_give']
+#     star = db.mystar.find_one({'img':img_receive})
+
+#     new_like = star['like']+1
+#     db.mystar.update_one({'img':img_receive},{'$set':{'like':new_like}})
+
+#     return jsonify({'result': 'success'})
+
+
 
 
 
