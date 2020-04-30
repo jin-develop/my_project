@@ -2,7 +2,12 @@ import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-driver = webdriver.Chrome('C:\\Users\\nick0\\Desktop\\chromedriver')
+
+options = webdriver.ChromeOptions()
+options.add_argument('headless')
+options.add_argument("--disable-gpu")
+options.add_argument("lang=ko_KR")
+driver = webdriver.Chrome('C:\\Users\\nick0\\Desktop\\chromedriver', chrome_options= options)
 import time
 import random
 
@@ -16,7 +21,7 @@ db = client.dbikea
 
 
 ikea_sofa = {
-    'gray': 'https://www.ikea.com/kr/ko/cat/all-sofas-39130/?filters=color%3A%EA%B7%B8%EB%A0%88%EC%9D%B4%2410028',
+    'grey': 'https://www.ikea.com/kr/ko/cat/all-sofas-39130/?filters=color%3A%EA%B7%B8%EB%A0%88%EC%9D%B4%2410028',
     'beige': 'https://www.ikea.com/kr/ko/cat/all-sofas-39130/?filters=color%3A%EB%B2%A0%EC%9D%B4%EC%A7%80%2410003',
     'black': 'https://www.ikea.com/kr/ko/cat/all-sofas-39130/?filters=color%3A%EB%B8%94%EB%9E%99%2410139',
     'brown': 'https://www.ikea.com/kr/ko/cat/all-sofas-39130/?filters=color%3A%EB%B8%8C%EB%9D%BC%EC%9A%B4%2410019',
@@ -91,6 +96,7 @@ def make_ikea_sofa():
 
                 ##### DB에 추가하기,
                 doc = {
+                    'homepage': '이케아(Ikea)',
                     'brand': name1,
                     'color': color,
                     'name': name,
@@ -143,6 +149,7 @@ def make_ikea_chair():
 
                 ##### DB에 추가하기,
                 doc = {
+                    'homepage': '이케아(Ikea)',
                     'brand': name1,
                     'color': color,
                     'name': name,
@@ -195,6 +202,7 @@ def make_ikea_desk():
 
                 ##### DB에 추가하기,
                 doc = {
+                    'homepage': '이케아(Ikea)',
                     'brand': name1,
                     'color': color,
                     'name': name,
@@ -468,6 +476,7 @@ def make_ounul_sofa():
 
                 # ##### DB에 추가하기,
                 doc = {
+                    'homepage': '오늘의집',
                     'brand': brand,
                     'type': type_,
                     'name': name,
@@ -520,6 +529,7 @@ def make_ounul_chair():
 
                 # ##### DB에 추가하기,
                 doc = {
+                    'homepage': '오늘의집',
                     'brand': brand,
                     'type': type_,
                     'name': name,
@@ -572,6 +582,7 @@ def make_ounul_desk():
 
                 # ##### DB에 추가하기,
                 doc = {
+                    'homepage': '오늘의집',
                     'brand': brand,
                     'type': type_,
                     'name': name,
@@ -604,5 +615,5 @@ def make_all():
     # make_dongsuh()
     make_ounul()
 
-# drop_all()
+drop_all()
 make_all()

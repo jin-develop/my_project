@@ -4,7 +4,7 @@
 <head>
 
     <!-- Webpage Title -->
-    <title>!!!!!!!!!!!!!가구 찾기!!!!!!!!!!!!!!!!!!!!</title>
+    <title>!!가구 찾기!!</title>
 
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -15,12 +15,12 @@
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
+        <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <!-- JS -->
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-
+    
 
 
     <script>
@@ -32,72 +32,208 @@
         );
 
         $(document).ready(function () {
-            alert('랜덤검색!')
             $('.cards').empty('');
-            $.ajax({
-                type: "GET",
-                url: "/info/random",
-                data: {},
-                success: function (response) {
-                    if (response['result'] == 'success') {
-                        let rands = response['rand'];
-                        for (let i = 0; i < 50; i++) {
-                            make_card(rands[i]['price'], rands[i]['img'], rands[i]['name'], rands[i]['url'], rands[i]['brand']);
-                        }
-                    }else {
-                        alert('정보를 받아오지 못했습니다');
-                    }
-                }
-            });
 
+            let thing = localStorage.getItem('pre_selected');
+            let pre_counted = localStorage.getItem('pre_counted');
+            let number_count = parseInt(pre_counted)
+            alert('Searching.....')
+            if (thing != null) {
+                let url = `/info/${thing}`;
+
+                if (thing == 'sofa') {
+
+                    $.ajax({
+                        type: "GET",
+                        url: url,
+                        data: {},
+                        success: function (response) {
+                            if (response['result'] == 'success') {
+                                let sofas = response['sofas'];
+                                make_price()
+                                for (let i = 0; i < number_count; i++) {
+                                    make_card(sofas[i]['price'], sofas[i]['img'], sofas[i]['name'], sofas[i]['url'], sofas[i]['brand'],sofas[i]['like'])
+                                }
+                            } else {
+                                alert('기사를 받아오지 못했습니다');
+                            }
+                        }
+                    });
+                }
+
+                if (thing == 'chair') {
+
+                    $.ajax({
+                        type: "GET",
+                        url: url,
+                        data: {},
+                        success: function (response) {
+                            if (response['result'] == 'success') {
+                                let chairs = response['chairs'];
+                                make_price()
+                                for (let i = 0; i < number_count; i++) {
+                                    make_card(chairs[i]['price'], chairs[i]['img'], chairs[i]['name'], chairs[i]['url'], chairs[i]['brand'],chairs[i]['like'])
+                                }
+                            } else {
+                                alert('기사를 받아오지 못했습니다');
+                            }
+                        }
+                    });
+                }
+
+                if (thing == 'desk') {
+
+                    $.ajax({
+                        type: "GET",
+                        url: url,
+                        data: {},
+                        success: function (response) {
+                            if (response['result'] == 'success') {
+                                let desks = response['desks'];
+                                make_price()
+                                for (let i = 0; i < number_count; i++) {
+                                    make_card(desks[i]['price'], desks[i]['img'], desks[i]['name'], desks[i]['url'], desks[i]['brand'],desks[i]['like'])
+                                }
+                            } else {
+                                alert('기사를 받아오지 못했습니다');
+                            }
+                        }
+                    });
+                }
+            }
         });
 
-
-        function randgo() {
-            $('.cards').empty('');
-            $.ajax({
-                type: "GET",
-                url: "/info/random",
-                data: {},
-                success: function (response) {
-                    if (response['result'] == 'success') {
-                        let rands = response['rand'];
-                        for (let i = 0; i < 50; i++) {
-                            make_card(rands[i]['price'], rands[i]['img'], rands[i]['name'], rands[i]['url'], rands[i]['brand']);
-                        }
-                    }else {
-                        alert('정보를 받아오지 못했습니다');
-                    }
-                }
-            });
+        function openclose() {
+            if ($('#posting-box').css('display') == 'block') {
+                $('#posting-box').hide();
+                $('.button is-warning').text('가격비교 열기');
+            } else {
+                $('#posting-box').show();
+                $('.button is-warning').text('가격비교 끄기');
+            }
         }
+
         function goback() {
             window.location.href = "/";
         }
 
 
-        function make_card(price, img, name, url, brand) {
+        function make_card(price, img, name, url, brand,like) {
             let temp_html = '<figure class="snip1446">\
                             <div class="gogo" style="display: inline-block;">\
-                                <img src="'+ img + ' alt="sample71" />좋아요갯수\
+                                <img src="'+ img + ' alt="sample71" />\
                             <figcaption>\
-                                <h2> '+ name + '</h2><br><br><br><br><br><br><br>\
-                                <h3 class="url"><a href="'+ url + '">' + brand + '</a>\</h3>\
+                                <h2> '+ name + '<br> </h2><br><br><br><br><br><br><br>\
+                                <h3 class="url">'+ ' 추천 : '+ like +'<br><a href="'+ url + '">' + brand + '</a>\</h3>\
                                 <h3>'+ price + '</h3>\
                                 <div class="icons">\
-                                    <a href="#"> <i class="ion-heart onclick="like_item(\''+ img + '\');"></i></a>\
+                                    <a href="#"> <i class="ion-heart" onclick="like_item(\''+ img + '\');"></i></a>\
                                     <a href="'+ url + '"> <i class="ion-search"></i></a>\
                                     <a href="#"> <i class="icon ion-archive"></i></a>\
                                     <a href="#"> <i class="icon ion-close" onclick="delete_item(\''+ img + '\');"></i></a>\
                                 </div>\
                             </figcaption>\
-                        </div>\
-                        </figure>';
+                            </div>\
+                            </figure>';
             $('.cards').append(temp_html);
         }
 
+        function make_price() {
+            $('#buttons_pi').empty('');
+            let temp_html = '\
+                        <button class="button is-primary is-ligh" onclick="openclose()">가격으로 검색!</button><br>\
+                      </div>\
+                      <div class="form-post" id="posting-box">\
+                        <div id=\'price\'>\
+                          <div>\
+                            <label> 최소가격(원): </label>\
+                            <input type="number" id="min_price" min="1000" max="10000000" >\
+                            <span id="value1"></span>\
+                          </div>\
+                          <div>\
+                            <label> 최대가격(원): </label>\
+                            <input type="number" id="max_price" min="1000" max="100000000" >\
+                            <span id="value2"></span>\
+                          </div>\
+                          <div class="buttons">\
+                            <button class="button is-primary" onclick="give_price()">검색!</button>\
+                          </div>\
+                        </div>'
+            $('#buttons_pi').append(temp_html);
+        }
 
+        function give_price() {
+            let thing = localStorage.getItem('pre_selected');
+            let pre_counted = localStorage.getItem('pre_counted');
+            let number_count = parseInt(pre_counted)
 
+            let min_price = parseInt($('#min_price').val());
+            let max_price = parseInt($('#max_price').val());
+            if ($('#min_price').val() == '' || $('#max_price').val() == ''){
+                alert('가격을 입력해주세요!');
+                return;
+            }
+            if ( min_price > max_price || min_price == max_price) {
+                alert('값을 정확히 입력해주세요.');
+                return;
+            }
+            $('.cards').empty('');
+
+            if (thing == 'sofa') {
+                $.ajax({
+                    type: "POST",
+                    url: "/info/price/sofa",
+                    data: {
+                        'min_price_give': min_price,
+                        'max_price_give': max_price
+                    },
+                    success: function (response) {
+                        if (response['result'] == 'success') {
+                            let sofas = response['sofas'];
+                            for (let i = 0; i < 20; i++) {
+                                make_card(sofas[i]['price'], sofas[i]['img'], sofas[i]['name'], sofas[i]['url'], sofas[i]['brand'],sofas[i]['like'])
+                            }
+                        }
+                    }
+                });
+            }
+            if (thing == 'chair') {
+                $.ajax({
+                    type: "POST",
+                    url: "/info/price/chair",
+                    data: {
+                        'min_price_give': min_price,
+                        'max_price_give': max_price
+                    },
+                    success: function (response) {
+                        if (response['result'] == 'success') {
+                            let sofas = response['chairs'];
+                            for (let i = 0; i < 20; i++) {
+                                make_card(sofas[i]['price'], sofas[i]['img'], sofas[i]['name'], sofas[i]['url'], sofas[i]['brand'],sofas[i]['like'])
+                            }
+                        }
+                    }
+                });
+            }
+            if (thing == 'desk') {
+                $.ajax({
+                    type: "POST",
+                    url: "/info/price/desk",
+                    data: {
+                        'min_price_give': min_price,
+                        'max_price_give': max_price
+                    },
+                    success: function (response) {
+                        if (response['result'] == 'success') {
+                            let sofas = response['desks'];
+                            for (let i = 0; i < 20; i++) {
+                                make_card(sofas[i]['price'], sofas[i]['img'], sofas[i]['name'], sofas[i]['url'], sofas[i]['brand'],sofas[i]['like'])
+                            }
+                        }
+                    }
+                });
+            }
+        }
 
         function delete_item(img) {
             $.ajax({
@@ -107,9 +243,10 @@
                 success: function (response) {
                     if (response['result'] == 'success') {
                         // 2. '삭제 완료! 안녕!' 얼럿을 띄웁니다.
-                        alert('삭제 완료! 안녕!')
+                        alert('삭제 완료!')
                         // 3. 변경된 정보를 반영하기 위해 새로고침합니다.
                         window.location.reload()
+
                     }
                 }
             });
@@ -126,14 +263,82 @@
                         // 2. '좋아요 완료!' 얼럿을 띄웁니다.
                         alert('좋아요 완료!')
                         // 3. 변경된 정보를 반영하기 위해 새로고침합니다.
-                   
-                   
                         window.location.reload()
                     }
                 }
             });
         }
+        function sorted() {
+            $('.cards').empty('');
 
+            let thing = localStorage.getItem('pre_selected');
+            let pre_counted = localStorage.getItem('pre_counted');
+            let number_count = parseInt(pre_counted);
+            alert('인기순 정렬중...')
+            if (thing != null) {
+                let url = `/info/${thing}`;
+
+                if (thing == 'sofa') {
+
+                    $.ajax({
+                        type: "GET",
+                        url: url+'/like',
+                        data: {},
+                        success: function (response) {
+                            if (response['result'] == 'success') {
+                                let sofas = response['sofas'];
+                                make_price()
+                                for (let i = 0; i < number_count; i++) {
+                                    make_card(sofas[i]['price'], sofas[i]['img'], sofas[i]['name'], sofas[i]['url'], sofas[i]['brand'],sofas[i]['like'])
+                                }
+                            } else {
+                                alert('기사를 받아오지 못했습니다');
+                            }
+                        }
+                    });
+                }
+
+                if (thing == 'chair') {
+
+                    $.ajax({
+                        type: "GET",
+                        url: url+'/like',
+                        data: {},
+                        success: function (response) {
+                            if (response['result'] == 'success') {
+                                let chairs = response['chairs'];
+                                make_price()
+                                for (let i = 0; i < number_count; i++) {
+                                    make_card(chairs[i]['price'], chairs[i]['img'], chairs[i]['name'], chairs[i]['url'], chairs[i]['brand'],chairs[i]['like'])
+                                }
+                            } else {
+                                alert('기사를 받아오지 못했습니다');
+                            }
+                        }
+                    });
+                }
+
+                if (thing == 'desk') {
+
+                    $.ajax({
+                        type: "GET",
+                        url: url+'/like',
+                        data: {},
+                        success: function (response) {
+                            if (response['result'] == 'success') {
+                                let desks = response['desks'];
+                                make_price()
+                                for (let i = 0; i < number_count; i++) {
+                                    make_card(desks[i]['price'], desks[i]['img'], desks[i]['name'], desks[i]['url'], desks[i]['brand'],desks[i]['like'])
+                                }
+                            } else {
+                                alert('기사를 받아오지 못했습니다');
+                            }
+                        }
+                    });
+                }
+            }
+        }
     </script>
 
 
@@ -150,7 +355,7 @@
         }
 
         .titnl {
-            width: 1300px;
+
             margin: auto;
             padding: 30px;
             display: flex;
@@ -158,12 +363,6 @@
             align-items: center;
             background-color: rgb(235, 214, 159);
         }
-
-
-        .style222 {
-            color: green;
-        }
-
 
         .snip1446 {
 
@@ -404,13 +603,14 @@
 
                 <br>
                 <p class="lead">
-                    <a id="btn-posting-box" onclick="goback()" class="button is-success" href="#" role="button">
-                        홈으로</a>
-                </p>
+                    <a id="btn-posting-box" onclick="goback()" class="button is-link is-light" href="#" role="button">
+                        다시 검색하기!</a>
+                </p><br>
                 <p class="lead">
-                    <a id="btn-posting-box" onclick="randgo()" class="button is-success" href="#" role="button">
-                        다시 랜덤검색</a>
+                    <a id="btn-posting-box" onclick="sorted()" class="button is-success is-light" href="#" role="button">
+                        인기순서대로</a>
                 </p>
+                
                 <br>
                 <div id="buttons_pi">
 
@@ -421,7 +621,7 @@
     </div>
 
 
-    <div class="cards" >
+    <div class="cards">
         <figure class="snip1446">
             <div class="gogo">
                 <img class='img_url'
