@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <!-- Webpage Title -->
+  <title>Youtube Shuffle</title>
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+ 
+
+  <!-- CSS -->
+
+  <!-- JS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<!-- 
+  <meta property="og:url" content="http://findmyinterior.shop/">
+  <meta property="og:title" content=" 여러가구 한눈에 보기 ">
+  <meta name="og:description" content=" 가구찾기 --------첫홈페이지 JH~~~~~~~~~~~~~~~~~ ">
+  <meta property="og:image" content="https://i.pinimg.com/originals/a2/56/b1/a256b1a325a6af0f2f76c48180f9193a.jpg"> -->
+
+
+ 
+  <script>
+    // $(function () {
+    //   $(".box").draggable();
+    // });
+
+    // function goToInfo() {
+    //   let selected_one = $('#something').val();
+    //   let counted_one = $('#pre_count').val();
+
+    //   if (selected_one == 'none') {
+    //     alert('가구를 선택하세요.');
+    //     return;
+    //   }
+    //   if (counted_one == '') {
+    //     alert('숫자를 입력하세요!!')
+    //     return;
+    //   }
+
+    //   localStorage.setItem('pre_selected', selected_one);
+    //   localStorage.setItem('pre_counted', counted_one);
+    //   window.location.href = '/info';
+    // }
+
+    function goTorandom() {
+      window.location.href = '/rand';
+    }
+
+    function okgood() {
+      alert(textHtml)
+      alert("!!s")
+      
+    }
+  </script>
+
+
+  <!-- style -->
+  <style type="text/css">
+    .some {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      margin: 5px;
+    }
+
+    #btn_group button {
+      border: 1px solid skyblue;
+      background-color: rgba(8, 142, 252, 0);
+      color: rgb(44, 168, 218);
+      padding: 5px;
+    }
+
+    #btn_group button:hover {
+      color: white;
+      background-color: rgb(82, 14, 241);
+    }
+
+    #go1 {
+      margin: 10px;
+    }
+
+    #go2 {
+      margin: 50px;
+      width: 200px;
+      height: 50px;
+    }
+  </style>
+
+</head>
+
+<body>
+
+
+
+
+  <h1>
+    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+
+    <small>가격으로</small> 가구 비교하기 <br>
+
+  </h1>
+  
+  
+  <div>
+    <div id='textHtml1' name="textHtml1" style='width:400px;height:200px;border:solid 1px gray'
+    contentEditable='true'> 본문 랜덤재생</div>
+    <input type='submit' value='submit' onclick="okgood();" >
+  </div>
+<div>
+      <div id='textHtml2' name="textHtml2" style='width:400px;height:200px;border:solid 1px gray'
+          contentEditable='true'> 댓글 랜덤재생 </div> <br />
+      <input type='submit' value='submit' onclick="okgood();" >
+  </div>
+
+
+  
+    
+  <button name="forwardBtn" id="go1" onclick="goToInfo();">찾으러가기</button>
+  <button name="forwardBtn" id="go2" onclick="goTorandom();">그냥둘러보기</button>
+
+
+  <script type="text/javascript" src="you.js"></script> 
+</body>
+
+</html>
